@@ -4,6 +4,7 @@ import '../providers/notes_provider.dart';
 import '../models/note.dart';
 import '../models/category.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -250,77 +251,92 @@ class _HomeScreenState extends State<HomeScreen> {
         final DateFormat formatter = DateFormat('MMMM d yyyy HH:mm');
         final String formattedDate = formatter.format(note.createdAt);
 
-        return InkWell(
-          onTap: () => _showNoteDialog(context, note: note),
-          child: Card(
-            color: Color(int.parse(category.color.replaceAll('#', '0xFF'))),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15.0),
-            ),
-            elevation: 4.0,
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          note.title,
+        return AnimationConfiguration.staggeredGrid(
+          position: index,
+          duration: const Duration(milliseconds: 375),
+          columnCount: 2, // Assuming 2 columns in the grid
+          child: ScaleAnimation(
+            child: FadeInAnimation(
+              child: InkWell(
+                onTap: () => _showNoteDialog(context, note: note),
+                child: Card(
+                  color: Color(
+                    int.parse(category.color.replaceAll('#', '0xFF')),
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.0),
+                  ),
+                  elevation: 4.0,
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                note.title,
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: _getTextColor(
+                                    Color(
+                                      int.parse(
+                                        category.color.replaceAll('#', '0xFF'),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            // IconButton(
+                            //   icon: const Icon(Icons.more_vert, color: Colors.black),
+                            //   onPressed: () {
+                            //     // TODO: Implement more options like delete
+                            //   },
+                            // ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Expanded(
+                          child: Text(
+                            note.content,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: _getTextColor(
+                                Color(
+                                  int.parse(
+                                    category.color.replaceAll('#', '0xFF'),
+                                  ),
+                                ),
+                              ).withOpacity(0.9),
+                            ),
+                            maxLines: 6,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          formattedDate,
                           style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                            fontSize: 10,
                             color: _getTextColor(
                               Color(
                                 int.parse(
                                   category.color.replaceAll('#', '0xFF'),
                                 ),
                               ),
-                            ),
+                            ).withOpacity(0.7),
                           ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                      // IconButton(
-                      //   icon: const Icon(Icons.more_vert, color: Colors.black),
-                      //   onPressed: () {
-                      //     // TODO: Implement more options like delete
-                      //   },
-                      // ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Expanded(
-                    child: Text(
-                      note.content,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: _getTextColor(
-                          Color(
-                            int.parse(category.color.replaceAll('#', '0xFF')),
-                          ),
-                        ).withOpacity(0.9),
-                      ),
-                      maxLines: 6,
-                      overflow: TextOverflow.ellipsis,
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    formattedDate,
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: _getTextColor(
-                        Color(
-                          int.parse(category.color.replaceAll('#', '0xFF')),
-                        ),
-                      ).withOpacity(0.7),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
           ),
